@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # In[28]:
-
+import sys
 
 class Desk:
     def __init__(self, height, weight):
@@ -134,24 +134,36 @@ class Desk:
             for j in range(self.weight-2):
                 self.matrix[i+1][j+1][0] = self.matrix[i+1][j+1][1]
     
-    def PrintCell(self, y, x):
+    def PrintCell(self, y, x, r):
         #here should be strange print for every type of life on cell|Rock is life too
-        stdout.write(self.matrix[y][x][0], end="")
-    
-    def Print(self):
+        if r == 1:
+            sys.stdout.write(self.matrix[y][x][0], end="")
+        else:
+            print(self.matrix[y][x][0], end="")
+    def Print(self, r):
         for i in range(self.height-2):
             for j in range(self.weight-2):
-                self.PrintCell(i+1, j+1)
-            stdout.write("", end="\n")
-def modeling():
-    generations = int(stdin.readline())        
-    ls = stdin.readline().split()        
+                self.PrintCell(i+1, j+1, r)
+            if r == 1:
+                sys.stdout.write("", end="\n")
+            else:
+                print("", end="\n")
+def modeling(g, q):
+    if g == 1:
+        generations = int(sys.stdin.readline())
+        ls = sys.stdin.readline().split() 
+    else:
+        generations = int(input())
+        ls = input().split()   
     matrix = Desk(int(ls[0]), int(ls[1]))
     for t in range(matrix.height - 2):
-        s = stdin.readline()
+        if g == 1:
+            s = sys.stdin.readline()
+        else:
+            s = input()
         matrix.SetStringMatrix(t+1, s)
     while generations > 0:
         matrix.UpdateMatrix()
         generations -= 1
-    matrix.Print()
+    matrix.Print(q)
 

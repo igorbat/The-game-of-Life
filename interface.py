@@ -18,7 +18,6 @@ while (flag == 0):
             ls = s.split()
             reader = ls[1]
             if len(ls) > 1:                
-                sys.stdin = open(reader,"r")
                 flag = 1
             else:
                 print("Don't get you!")
@@ -28,16 +27,16 @@ while (flag == 0):
     else:
         print("Don't get you!")
         continue
-print("? for console write or !f <output filename without <> >")
+print("? for console write or ! <output filename without <> >")
 flag = 0
 while (flag == 0):
     s = input()
     if len(s) >= 1:
         if s[0] != '?':
             ls = s.split()
-            reader = ls[1]
+            writer = ls[1]
             if len(ls) > 1:
-                sys.stdout = open(writer,"w")
+
                 flag = 1
             else:
                 print("Don't get you!")
@@ -47,7 +46,16 @@ while (flag == 0):
     else:
         print("Don't get you!")
         continue
-modeling()
+t = 0
+q = 0
+if(reader != "?"):
+    sys.stdin = open(reader,"r")
+    t = 1
+if(writer != "?"):
+    sys.stdout = open(writer,"w")
+    q = 1
+                
+modeling(t, q)
 if(reader != "?"):
     sys.stdin.close()
 if(writer != "?"):
