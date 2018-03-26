@@ -1,1 +1,1 @@
-# fish-chips
+В итоге . interface - скрипт. thagameoflife - моделирование. Тесты в папке тесты - тесты.
