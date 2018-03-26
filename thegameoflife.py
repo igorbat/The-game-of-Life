@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[25]:
+# In[28]:
 
 
 class Desk:
@@ -136,28 +136,22 @@ class Desk:
     
     def PrintCell(self, y, x):
         #here should be strange print for every type of life on cell|Rock is life too
-        print(self.matrix[y][x][0], end="")
+        stdout.write(self.matrix[y][x][0], end="")
     
     def Print(self):
         for i in range(self.height-2):
             for j in range(self.weight-2):
                 self.PrintCell(i+1, j+1)
-            print("", end="\n")
+            stdout.write("", end="\n")
 def modeling():
-    generations = int(input())        
-    ls = input().split()        
+    generations = int(stdin.readline())        
+    ls = stdin.readline().split()        
     matrix = Desk(int(ls[0]), int(ls[1]))
     for t in range(matrix.height - 2):
-        s = input()
+        s = stdin.readline()
         matrix.SetStringMatrix(t+1, s)
     while generations > 0:
         matrix.UpdateMatrix()
         generations -= 1
     matrix.Print()
-
-
-# In[26]:
-
-
-
 
