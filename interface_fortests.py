@@ -1,11 +1,6 @@
-
-# coding: utf-8
-
-# In[ ]:
-
-
-from thegameoflife import *
+from thegameoflife_fortests import modeling
 import sys
+
 
 print("? for console read or !f <input filename without <> >")
 flag = 0
