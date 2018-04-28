@@ -1,58 +1,31 @@
 from thegameoflife_fortests import modeling
 import sys
+import argparse
 
+parser = argparse.ArgumentParser(description='Info for modelling')
 
-print("? for console read or !f <input filename without <> >")
-flag = 0
-reader = "?"
-writer = "?"
-while (flag == 0):
-    s = input()
-    if len(s) >= 1:
-        if s[0] != '?':
-            ls = s.split()
-            reader = ls[1]
-            if len(ls) > 1:                
-                flag = 1
-            else:
-                print("Don't get you!")
-                continue
-        else:
-            flag = 1
-    else:
-        print("Don't get you!")
-        continue
-print("? for console write or ! <output filename without <> >")
-flag = 0
-while (flag == 0):
-    s = input()
-    if len(s) >= 1:
-        if s[0] != '?':
-            ls = s.split()
-            writer = ls[1]
-            if len(ls) > 1:
+parser.add_argument('--fr', help='file to read (default: stdin)',
+                    default='stdin')
+parser.add_argument('--fw', help='file to write (default: stdout',
+                    default='stdout')
 
-                flag = 1
-            else:
-                print("Don't get you!")
-                continue
-        else:
-            flag = 1
-    else:
-        print("Don't get you!")
-        continue
-t = 0
-q = 0
-if(reader != "?"):
-    sys.stdin = open(reader,"r")
-    t = 1
-if(writer != "?"):
-    sys.stdout = open(writer,"w")
-    q = 1
-                
+args = parser.parse_args()
+t = 1
+q = 1
+if not args.fr == 'stdin':
+    sys.stdin = open(args.fr, 'r')
+else:
+    t = 0
+
+if not args.fw == 'stdout':
+    sys.stdout = open(args.fw, 'w')
+else:
+    q = 0
+
 modeling(t, q)
-if(reader != "?"):
+
+if t:
     sys.stdin.close()
-if(writer != "?"):
+if q:
     sys.stdout.close()
 
