@@ -13,6 +13,7 @@ def Create(name, y, x, desk):
     else:
         raise ValueError
 
+
 def GetSymbol(name):
     if name == "Void":
         return "."
@@ -25,6 +26,7 @@ def GetSymbol(name):
     else:
         raise ValueError
 
+
 class Desk:
     def __init__(self, height, weight):
         self.height = height + 2
@@ -33,7 +35,6 @@ class Desk:
         self.matrix = [[] for i in range(self.height)]
         for i in range(self.height):
             self.matrix[i] = [Void(i, j, self) for j in range(self.weight)]
-
 
     def SetStringMatrix(self, y, st):
         for i in range(self.weight - 2):
