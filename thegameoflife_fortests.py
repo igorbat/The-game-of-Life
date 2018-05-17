@@ -11,62 +11,69 @@ def Create(name, y, x, desk):
     elif name == "s":
         return Shrimp(y, x, desk)
     else:
-        raise Exception
+        raise ValueError
 
+def GetSymbol(name):
+    if name == "Void":
+        return "."
+    elif name == "Fish":
+        return "f"
+    elif name == "Rock":
+        return "#"
+    elif name == "Shrimp":
+        return "s"
+    else:
+        raise ValueError
 
 class Desk:
     def __init__(self, height, weight):
         self.height = height + 2
         self.weight = weight + 2
         self.matrix = list()
+        self.matrix = [[] for i in range(self.height)]
         for i in range(self.height):
-            self.matrix.append(list())
-            for j in range(self.weight):
-                self.matrix[i].append(list())
-                self.matrix[i][j].append(Void(i, j, self))
-                self.matrix[i][j].append(Void(i, j, self))
+            self.matrix[i] = [Void(i, j, self) for j in range(self.weight)]
+
 
     def SetStringMatrix(self, y, st):
         for i in range(self.weight - 2):
-            self.matrix[y][i+1][0] = Create(st[i], y, i+1, self)
+            self.matrix[y][i+1] = Create(st[i], y, i+1, self)
+
+    def ClearNewMatrix(self):
+        self.newmatrix = list()
+        self.newmatrix = [[] for i in range(self.height)]
+        for i in range(self.height):
+            self.newmatrix[i] = [Void(i, j, self) for j in range(self.weight)]
 
     def UpdateMatrix(self):
+        self.ClearNewMatrix()
         for i in range(self.height-2):
             for j in range(self.weight-2):
-                self.matrix[i+1][j+1][0].Update()
+                self.matrix[i+1][j+1].Update()
         for i in range(self.height-2):
             for j in range(self.weight-2):
-                self.matrix[i+1][j+1][0] = self.matrix[i+1][j+1][1]
+                self.matrix[i+1][j+1] = self.newmatrix[i+1][j+1]
 
-    def Print(self, r):
+    def Print(self, OutputWhere):
         for i in range(self.height-2):
             s = ""
             for j in range(self.weight-2):
-                s = s + self.matrix[i+1][j+1][0].Print()
-            if r == 1:
-                sys.stdout.write(s + "\n")
-            else:
-                print(s)
+                s = s + GetSymbol(self.matrix[i+1][j+1].Print())
+            print(s, file=OutputWhere)
 
 
-def modeling(g, q):
-    if g == 1:
-        generations = int(sys.stdin.readline())
-        ls = sys.stdin.readline().split()
-    else:
-        generations = int(input())
-        ls = input().split()
+def modeling(InputFrom, OutputWhere):
+    Input = InputFrom.read().split('\n')
+    generations = int(Input[0])
+    ls = Input[1].split()
     matrix = Desk(int(ls[0]), int(ls[1]))
     for t in range(matrix.height - 2):
-        if g == 1:
-            s = sys.stdin.readline()
-        else:
-            s = input()
+        s = Input[t+2]
         matrix.SetStringMatrix(t+1, s)
     while generations > 0:
         matrix.UpdateMatrix()
         generations -= 1
-    matrix.Print(q)
+    matrix.Print(OutputWhere)
 
 
 class ObjInterface:
@@ -78,91 +85,65 @@ class ObjInterface:
     def Update(self):
         pass
 
+    def CheckCondition(self, obj):
+        counter = 0
+        for i in range(3):
+            for j in range(3):
+                if type(self.desk.matrix[self.y - 1 + i][self.x - 1 + j]) == obj:
+                    counter += 1
+        return counter
+
     def Print(self):
         pass
 
 
 class Fish(ObjInterface):
     def Print(self):
-        return 'f'
+        return "Fish"
 
     def Update(self):
-        t = 0
-        for i in range(3):
-            for j in range(3):
-                if type(self.desk.matrix[self.y - 1 + i][self.x - 1 + j][0])\
-                        == Fish:
-                    t += 1
+        t = self.CheckCondition(Fish)
         if t < 3:
-            self.desk.matrix[self.y][self.x][1] = Void(self.y, self.x,
-                                                       self.desk)
+            self.desk.newmatrix[self.y][self.x] = Void(self.y, self.x, self.desk)
         elif t > 4:
-            self.desk.matrix[self.y][self.x][1] = Void(self.y, self.x,
-                                                       self.desk)
+            self.desk.newmatrix[self.y][self.x] = Void(self.y, self.x, self.desk)
         else:
-            self.desk.matrix[self.y][self.x][1] = Fish(self.y, self.x,
-                                                       self.desk)
+            self.desk.newmatrix[self.y][self.x] = Fish(self.y, self.x, self.desk)
 
 
 class Shrimp(ObjInterface):
     def Print(self):
-        return 's'
+        return "Shrimp"
 
     def Update(self):
-        t = 0
-        for i in range(3):
-            for j in range(3):
-                if type(self.desk.matrix[self.y - 1 + i][self.x - 1 + j][0])\
-                        == Shrimp:
-                    t += 1
+        t = self.CheckCondition(Shrimp)
         if t < 3:
-            self.desk.matrix[self.y][self.x][1] = Void(self.y, self.x,
-                                                       self.desk)
+            self.desk.newmatrix[self.y][self.x] = Void(self.y, self.x, self.desk)
         elif t > 4:
-            self.desk.matrix[self.y][self.x][1] = Void(self.y, self.x,
-                                                       self.desk)
+            self.desk.newmatrix[self.y][self.x] = Void(self.y, self.x, self.desk)
         else:
-            self.desk.matrix[self.y][self.x][1] = Shrimp(self.y, self.x,
-                                                         self.desk)
+            self.desk.newmatrix[self.y][self.x] = Shrimp(self.y, self.x, self.desk)
 
 
 class Void(ObjInterface):
     def Print(self):
-        return '.'
+        return "Void"
 
     def Update(self):
-        t = 0
-
-        for i in range(3):
-            for j in range(3):
-                if type(self.desk.matrix[self.y - 1 + i][self.x - 1 + j][0])\
-                        == Fish:
-                    t += 1
+        t = self.CheckCondition(Fish)
         if t == 3:
-            self.desk.matrix[self.y][self.x][1] = Fish(self.y, self.x,
-                                                       self.desk)
+            self.desk.newmatrix[self.y][self.x] = Fish(self.y, self.x, self.desk)
         else:
-            t = 0
-            for i in range(3):
-                for j in range(3):
-                    if type(self.desk.matrix[self.y - 1 + i][self.x - 1 + j][0])\
-                            == Shrimp:
-                        t += 1
+            t = self.CheckCondition(Shrimp)
             if t == 3:
-                self.desk.matrix[self.y][self.x][1] = Shrimp(self.y, self.x,
-                                                             self.desk)
+                self.desk.newmatrix[self.y][self.x] = Shrimp(self.y, self.x, self.desk)
             else:
-                self.desk.matrix[self.y][self.x][1] = Void(self.y, self.x,
-                                                           self.desk)
+                self.desk.newmatrix[self.y][self.x] = Void(self.y, self.x, self.desk)
 
 
 class Rock(ObjInterface):
     def Print(self):
-        return '#'
+        return "Rock"
 
     def Update(self):
-        self.desk.matrix[self.y][self.x][1] = Rock(self.y, self.x,
-                                                   self.desk)
-
-
-
+        self.desk.newmatrix[self.y][self.x] = Rock(self.y, self.x, self.desk)
